@@ -46,8 +46,8 @@ func (hl hashLife) KillCell(x, y int64) common.GolBoard {
 func (hl hashLife) IsAlive(x, y int64) bool {
 	val, err := hl.GetValue(x, y)
 
-	// TODO: log this; it really shouldn't happen
 	if err != nil {
+		fmt.Println("error: %s", err.Error())
 		// Just assume out of bounds is dead
 		return false
 	}
