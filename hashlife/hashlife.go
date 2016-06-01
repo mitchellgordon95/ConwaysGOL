@@ -14,8 +14,10 @@ type hashLife struct {
 // Get an instance of the hashlife board
 func NewHashLifeBoard() common.GolBoard {
 	// The width of the board is 2^64. This requires a quad
-	// tree with 65 levels
-	return hashLife{qt.EmptyTree(65)}
+	// tree with 65 levels. However, we want to compute the whole board,
+	// not just the subnode of width 2^63. So we need a tree with
+	// 66 levels
+	return hashLife{qt.EmptyTree(66)}
 }
 
 // Returns a copy of the board with cell in position (x,y) alive
@@ -61,7 +63,7 @@ var deadNode qt.Node
 func (hl hashLife) Step() common.GolBoard {
 	// Only bother building an empty node once
 	if deadNode == nil {
-		deadNode = qt.EmptyTree(63)
+		deadNode = qt.EmptyTree(64)
 	}
 	next := NextGeneration(hl.Node)
 

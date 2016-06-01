@@ -44,28 +44,35 @@ func (qn *quadNode) Level() uint {
 	return qn.level
 }
 
-func outOfBound(x, y int64, subsectionSize uint64) bool {
-	// Be careful of the case when subsectionSize == MaxInt64 + 1
-	return x > int64(subsectionSize-1) || x < int64(-subsectionSize) || y > int64(subsectionSize-1) || y < int64(-subsectionSize)
+func outOfBound(x, y, subsectionSize int64) bool {
+	return x >= subsectionSize || x < -subsectionSize || y >= subsectionSize || y < -subsectionSize
 }
 
 func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
-	// The width of a subsection. Note that level should always be less than 64.
-	// Therefore, we must used an uint64, since the max subsection size is MaxInt64 + 1
-	subsectionSize := uint64(1) << (qn.level - 1)
+	// If the level is 65 or above, construct a smaller subnode centered at the current one
+	// and call that.
+	if qn.level > 64 {
+		return QuadNode(qn.NW().SE(), qn.NE().SW(), qn.SW().NE(), qn.SE().NW()).SetValue(x, y, val)
+	}
 
-	if outOfBound(x, y, subsectionSize) {
-		return nil, errors.New("quadNode: grid location out of bound")
+	// if the level is 64 or above, don't check bounds because we can't possibly be out of them
+	if qn.level < 64 {
+		// The width of a subsection. Note this fits in an int64 since the level is < 64
+		subsectionSize := int64(1) << (qn.level - 1)
+		if outOfBound(x, y, subsectionSize) {
+			return nil, errors.New("quadNode: grid location out of bound")
+		}
 	}
 
 	var posOffset, negOffset int64
 	if qn.level == 1 {
-		// We need this case because -1 / 2 == 0
+		// Note: level 1 is a special case because we're using integer division (i.e. 1 / 2 == 0)
 		posOffset = 1
 		negOffset = 0
 	} else {
-		posOffset = int64(subsectionSize / 2)
-		negOffset = int64(-(subsectionSize / 2))
+		offset := int64(1) << (qn.level - 2)
+		posOffset = offset
+		negOffset = -offset
 	}
 
 	var out, subNode Node
@@ -93,12 +100,19 @@ func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
 }
 
 func (qn *quadNode) GetValue(x, y int64) (bool, error) {
-	// The width of a subsection. Note that level should always be less than 64.
-	// Therefore, we must used an uint64, since the max subsection size is MaxInt64 + 1
-	subsectionSize := uint64(1) << (qn.level - 1)
+	// If the level is 65 or above, construct a smaller subnode centered at the current one
+	// and call that.
+	if qn.level > 64 {
+		return QuadNode(qn.NW().SE(), qn.NE().SW(), qn.SW().NE(), qn.SE().NW()).GetValue(x, y)
+	}
 
-	if outOfBound(x, y, subsectionSize) {
-		return false, errors.New("quadNode, getval: grid location out of bound")
+	// if the level is 64 or above, don't check bounds because we can't possibly be out of them
+	if qn.level < 64 {
+		// The width of a subsection. Note this fits in an int64 since the level is < 64
+		subsectionSize := int64(1) << (qn.level - 1)
+		if outOfBound(x, y, subsectionSize) {
+			return false, errors.New("quadNode: grid location out of bound")
+		}
 	}
 
 	var posOffset, negOffset int64
@@ -107,8 +121,9 @@ func (qn *quadNode) GetValue(x, y int64) (bool, error) {
 		posOffset = 1
 		negOffset = 0
 	} else {
-		posOffset = int64(subsectionSize / 2)
-		negOffset = int64(-(subsectionSize / 2))
+		offset := int64(1) << (qn.level - 2)
+		posOffset = offset
+		negOffset = -offset
 	}
 
 	var val bool
