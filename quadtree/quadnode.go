@@ -50,9 +50,17 @@ func outOfBound(x, y, subsectionSize int64) bool {
 
 func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
 	// If the level is 65 or above, construct a smaller subnode centered at the current one
-	// and call that.
+	// and call that. Then reconstruct it into its original size
 	if qn.level > 64 {
-		return QuadNode(qn.NW().SE(), qn.NE().SW(), qn.SW().NE(), qn.SE().NW()).SetValue(x, y, val)
+		// Assume anything outside of the addressable bounds is empty
+		empty := qn.NW().NW()
+		res, err := QuadNode(qn.NW().SE(), qn.NE().SW(), qn.SW().NE(), qn.SE().NW()).SetValue(x, y, val)
+		return QuadNode(
+			QuadNode(empty, empty, empty, res.NW()),
+			QuadNode(empty, empty, res.NE(), empty),
+			QuadNode(empty, res.SW(), empty, empty),
+			QuadNode(res.SE(), empty, empty, empty),
+		), err
 	}
 
 	// if the level is 64 or above, don't check bounds because we can't possibly be out of them
