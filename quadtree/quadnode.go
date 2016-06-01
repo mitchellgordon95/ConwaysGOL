@@ -44,13 +44,15 @@ func (qn *quadNode) Level() uint {
 	return qn.level
 }
 
-func outOfBound(x, y, subsectionSize int64) bool {
-	return x >= subsectionSize || x < -subsectionSize || y >= subsectionSize || y < -subsectionSize
+func outOfBound(x, y int64, subsectionSize uint64) bool {
+	// Be careful of the case when subsectionSize == MaxInt64 + 1
+	return x > int64(subsectionSize-1) || x < int64(-subsectionSize) || y > int64(subsectionSize-1) || y < int64(-subsectionSize)
 }
 
 func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
 	// The width of a subsection. Note that level should always be less than 64.
-	subsectionSize := int64(1) << (qn.level - 1)
+	// Therefore, we must used an uint64, since the max subsection size is MaxInt64 + 1
+	subsectionSize := uint64(1) << (qn.level - 1)
 
 	if outOfBound(x, y, subsectionSize) {
 		return nil, errors.New("quadNode: grid location out of bound")
@@ -62,8 +64,8 @@ func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
 		posOffset = 1
 		negOffset = 0
 	} else {
-		posOffset = subsectionSize / 2
-		negOffset = -subsectionSize / 2
+		posOffset = int64(subsectionSize / 2)
+		negOffset = int64(-(subsectionSize / 2))
 	}
 
 	var out, subNode Node
@@ -92,7 +94,8 @@ func (qn *quadNode) SetValue(x, y int64, val bool) (Node, error) {
 
 func (qn *quadNode) GetValue(x, y int64) (bool, error) {
 	// The width of a subsection. Note that level should always be less than 64.
-	subsectionSize := int64(1) << (qn.level - 1)
+	// Therefore, we must used an uint64, since the max subsection size is MaxInt64 + 1
+	subsectionSize := uint64(1) << (qn.level - 1)
 
 	if outOfBound(x, y, subsectionSize) {
 		return false, errors.New("quadNode, getval: grid location out of bound")
@@ -104,8 +107,8 @@ func (qn *quadNode) GetValue(x, y int64) (bool, error) {
 		posOffset = 1
 		negOffset = 0
 	} else {
-		posOffset = subsectionSize / 2
-		negOffset = -subsectionSize / 2
+		posOffset = int64(subsectionSize / 2)
+		negOffset = int64(-(subsectionSize / 2))
 	}
 
 	var val bool

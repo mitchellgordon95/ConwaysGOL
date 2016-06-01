@@ -7,6 +7,10 @@ import (
 // A leaf node represents one cell of the board. It is either alive or dead.
 type leafNode bool
 
+func LeafNode(val bool) Node {
+	return leafNode(val)
+}
+
 func (ln leafNode) Level() uint {
 	return 0
 }
@@ -16,7 +20,7 @@ func (ln leafNode) SetValue(x, y int64, value bool) (Node, error) {
 		return nil, errors.New("leafNode: grid location out of bound")
 	}
 
-	return leafNode(value), nil
+	return LeafNode(value), nil
 }
 
 func (ln leafNode) GetValue(x, y int64) (bool, error) {

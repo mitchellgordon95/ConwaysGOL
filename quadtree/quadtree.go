@@ -30,7 +30,7 @@ func EmptyTree(levels int) Node {
 	}
 
 	// An empty cell
-	var node Node = leafNode(false)
+	var node Node = LeafNode(false)
 	for i := 1; i < levels; i++ {
 		// Build each level, pointing all quadrants to the empty node a level below the current one
 		node = QuadNode(node, node, node, node)
