@@ -14,7 +14,7 @@ type hashLife struct {
 // Get an instance of the hashlife board
 func NewHashLifeBoard() common.GolBoard {
 	// The width of the board is 2^64. This requires a quad
-	// tree with 64 levels
+	// tree with 65 levels
 	return hashLife{qt.EmptyTree(65)}
 }
 
