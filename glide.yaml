@@ -1,3 +1,8 @@
 package: github.com/mitchellgordon95/ConwaysGOL
 import:
 - package: gopkg.in/urfave/cli.v1
+- package: github.com/onsi/ginkgo
+  subpackages:
+  - ginkgo
+- package: github.com/onsi/gomega
+- package: gopkg.in/yaml.v2
