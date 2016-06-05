@@ -21,4 +21,7 @@ type GolBoard interface {
 
 	// Returns a copy of the board stepped to the next state of the simulation
 	Step() GolBoard
+
+	// Returns an empty board
+	Clear() GolBoard
 }

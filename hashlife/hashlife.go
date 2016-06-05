@@ -78,3 +78,7 @@ func (hl hashLife) Step() common.GolBoard {
 		),
 	}
 }
+
+func (hl hashLife) Clear() common.GolBoard {
+	return NewHashLifeBoard()
+}

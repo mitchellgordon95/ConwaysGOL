@@ -54,6 +54,10 @@ func (tm *textManager) Manage() {
 			tm.aliveCell(tokens[1:])
 		case "kill":
 			tm.deadCell(tokens[1:])
+		case "clear":
+			tm.board = tm.board.Clear()
+			tm.showBoard()
+			tm.ShowMessage("Cleared the board!")
 		case "next":
 			tm.nextBoard(tokens[1:])
 		case "center":
@@ -196,6 +200,7 @@ func (tm *textManager) help() {
 	tm.ShowMessage("Enter \"next [steps]\" to do a certain number of steps in the simulation")
 	tm.ShowMessage("Enter \"alive [x] [y]\" to set the cell at (x,y) as alive")
 	tm.ShowMessage("Enter \"kill [x] [y]\" to kill the cell at (x,y)")
+	tm.ShowMessage("Enter \"clear\" to kill all the cells on the board")
 	tm.ShowMessage("Enter \"center [x] [y]\" to re-center the view at (x,y) on the board")
 	tm.ShowMessage("Enter \"size [grid-width]\" to change the size of the view to the specified width")
 	tm.ShowMessage("Enter \"animate [steps] [delay]\" to animate the board for a certain number of steps. Delay is in milliseconds. Press enter at any time to stop the animation.")
