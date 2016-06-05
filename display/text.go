@@ -16,6 +16,8 @@ func NewTextDisplayer(writer io.Writer) Displayer {
 
 // Displays the game board in text.
 func (td *textDisplayer) Display(board common.GolBoard, min_x, min_y, max_x, max_y int64) {
+	// Clear the screen
+	fmt.Fprintf(td, "\033c")
 	for y := max_y - 1; y >= min_y; y-- {
 		for x := min_x; x < max_x; x++ {
 			val := board.IsAlive(int64(x), int64(y))
