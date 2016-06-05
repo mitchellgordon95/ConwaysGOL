@@ -112,7 +112,7 @@ func centeredHorizontal(w, e qt.Node) qt.Node {
 		return nil
 	}
 
-	return qt.QuadNode(w.NE().SE(), e.NW().SW(), w.SW().NE(), e.SW().NW())
+	return qt.QuadNode(w.NE().SE(), e.NW().SW(), w.SE().NE(), e.SW().NW())
 }
 
 // Given two nodes side by side on the grid, returns a node one level down centered vertically and on the boundary of the two nodes
