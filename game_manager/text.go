@@ -16,17 +16,17 @@ type textManager struct {
 	board common.GolBoard
 	*bufio.Reader
 	display.Displayer
-	size             int64
-	centerX, centerY int64
+	viewWidth, viewHeight int64
+	centerX, centerY      int64
 }
 
 /*
 Creates a new text manager to manage the game state.
 Takes a game board, a reader to get text from the user, a game displayer,
-and the size of the game board to display, centered at 0
+and the width of the game board to display, centered at 0. By default, the view is a square.
 */
-func NewTextManager(board common.GolBoard, read io.Reader, displayer display.Displayer, size int64) GolManager {
-	return &textManager{board, bufio.NewReader(read), displayer, size, 0, 0}
+func NewTextManager(board common.GolBoard, read io.Reader, displayer display.Displayer, width int64) GolManager {
+	return &textManager{board, bufio.NewReader(read), displayer, width, width, 0, 0}
 }
 
 func (tm *textManager) Manage() {
@@ -76,8 +76,9 @@ func (tm *textManager) Manage() {
 }
 
 func (tm *textManager) showBoard() {
-	half_size := tm.size / 2
-	tm.Display(tm.board, tm.centerX-half_size, tm.centerY-half_size, tm.centerX+half_size, tm.centerY+half_size)
+	half_width := tm.viewWidth / 2
+	half_height := tm.viewHeight / 2
+	tm.Display(tm.board, tm.centerX-half_width, tm.centerY-half_height, tm.centerX+half_width, tm.centerY+half_height)
 }
 
 func (tm *textManager) center(tokens []string) {
@@ -97,13 +98,30 @@ func (tm *textManager) center(tokens []string) {
 }
 
 func (tm *textManager) resize(tokens []string) {
-	new_size, err := strconv.ParseInt(tokens[0], 10, 64)
-	if err != nil {
-		tm.ShowMessage(err.Error())
+	if len(tokens) < 1 {
+		tm.ShowMessage("Not enough arguments")
 		return
 	}
 
-	tm.size = new_size
+	new_width, err := strconv.ParseInt(tokens[0], 10, 64)
+	if err != nil {
+		tm.ShowMessage("Invalid width")
+		return
+	}
+
+	if len(tokens) < 2 {
+		tm.viewWidth = new_width
+		tm.viewHeight = new_width
+	} else {
+		new_height, err := strconv.ParseInt(tokens[1], 10, 64)
+		if err != nil {
+			tm.ShowMessage("Invalid height")
+			return
+		}
+		tm.viewWidth = new_width
+		tm.viewHeight = new_height
+	}
+
 	tm.showBoard()
 	tm.ShowMessage("Updated view size")
 }
@@ -202,7 +220,8 @@ func (tm *textManager) help() {
 	tm.ShowMessage("Enter \"kill [x] [y]\" to kill the cell at (x,y)")
 	tm.ShowMessage("Enter \"clear\" to kill all the cells on the board")
 	tm.ShowMessage("Enter \"center [x] [y]\" to re-center the view at (x,y) on the board")
-	tm.ShowMessage("Enter \"size [grid-width]\" to change the size of the view to the specified width")
+	tm.ShowMessage("Enter \"resize [size]\" to change the size of the view to a square with the specified width")
+	tm.ShowMessage("Enter \"resize [width] [height]\" to change the size of the view to the specified width and height")
 	tm.ShowMessage("Enter \"animate [steps] [delay]\" to animate the board for a certain number of steps. Delay is in milliseconds. Press enter at any time to stop the animation.")
 	tm.ShowMessage("Enter \"help\" to show this message")
 	tm.ShowMessage("Enter \"quit\" to quit")
