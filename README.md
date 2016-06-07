@@ -38,6 +38,7 @@ You can use the -h flag for more startup options.
 ## Feature Wishlist
 
 - Parallelize the HashLife generation routine
+- Implement the "true" HashLife algorithm so we can do trillions of generations quickly
 - A GUI interface using OpenGL bindings for Go
 - Board serialization / deserialization to files
 - Better text animation for short delays
