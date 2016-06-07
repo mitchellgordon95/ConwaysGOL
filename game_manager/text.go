@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/mitchellgordon95/ConwaysGOL/common"
 	"github.com/mitchellgordon95/ConwaysGOL/display"
+	"github.com/mitchellgordon95/ConwaysGOL/files"
 	"io"
 	"strconv"
 	"strings"
@@ -47,6 +48,8 @@ func (tm *textManager) Manage() {
 		switch tokens[0] {
 		case "show":
 			tm.showBoard()
+		case "load":
+			tm.load(tokens[1:])
 		case "quit":
 			tm.ShowMessage("Bye!")
 			return
@@ -79,6 +82,17 @@ func (tm *textManager) showBoard() {
 	half_width := tm.viewWidth / 2
 	half_height := tm.viewHeight / 2
 	tm.Display(tm.board, tm.centerX-half_width, tm.centerY-half_height, tm.centerX+half_width, tm.centerY+half_height)
+}
+
+func (tm *textManager) load(tokens []string) {
+	newBoard, err := files.LoadJson(tm.board, tokens[0], tm.centerX, tm.centerY)
+	if err != nil {
+		tm.ShowMessage("Could not load board: " + err.Error())
+		return
+	}
+	tm.board = newBoard
+	tm.showBoard()
+	tm.ShowMessage("Loaded file onto board.")
 }
 
 func (tm *textManager) center(tokens []string) {
@@ -214,6 +228,7 @@ func (tm *textManager) greet() {
 
 func (tm *textManager) help() {
 	tm.ShowMessage("Enter \"show\" to show the current game board")
+	tm.ShowMessage("Enter \"load [filename]\" to load a json file containing alive cells onto the board, with respect to the current center")
 	tm.ShowMessage("Enter \"next\" to go to the next step in the simulation")
 	tm.ShowMessage("Enter \"next [steps]\" to do a certain number of steps in the simulation")
 	tm.ShowMessage("Enter \"alive [x] [y]\" to set the cell at (x,y) as alive")
