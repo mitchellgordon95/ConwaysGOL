@@ -43,3 +43,4 @@ You can use the -h flag for more startup options.
 - A GUI interface using OpenGL bindings for Go
 - Board deserialization to files
 - Better text animation for short delays
+- Ability to stop animations halfway
