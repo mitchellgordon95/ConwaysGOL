@@ -58,13 +58,9 @@ func (hl hashLife) IsAlive(x, y int64) bool {
 }
 
 // Returns a copy of the board stepped to the next state of the simulation
-var deadNode qt.Node
+var deadNode qt.Node = qt.EmptyTree(64)
 
 func (hl hashLife) Step() common.GolBoard {
-	// Only bother building an empty node once
-	if deadNode == nil {
-		deadNode = qt.EmptyTree(64)
-	}
 	next := NextGeneration(hl.Node)
 
 	// We have to pad the result with dead cells, since
