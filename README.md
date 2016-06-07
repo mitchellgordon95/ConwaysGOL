@@ -41,5 +41,5 @@ You can use the -h flag for more startup options.
 - Finish unit tests
 - Implement the "true" HashLife algorithm so we can do trillions of generations quickly
 - A GUI interface using OpenGL bindings for Go
-- Board serialization / deserialization to files
+- Board deserialization to files
 - Better text animation for short delays
