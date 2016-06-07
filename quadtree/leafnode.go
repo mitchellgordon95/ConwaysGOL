@@ -43,11 +43,3 @@ func (leafNode) SW() Node {
 func (leafNode) SE() Node {
 	return nil
 }
-
-func (leafNode) CenteredSubnode() Node {
-	return nil
-}
-
-func (leafNode) CenteredSubsubnode() Node {
-	return nil
-}
